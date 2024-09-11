@@ -1,0 +1,54 @@
+﻿@model IEnumerable<AnyMusic.Domain.Domain.Artist>
+
+
+@{
+    ViewData["Title"] = "Artists";
+}
+
+<div class="container mt-5">
+    <div class="row mb-4 text-white">
+        <div class="col">
+            <h1 class="display-4">Artists</h1>
+        </div>
+        <div class="col text-end">
+            <a class="btn btn-dark btn-lg" asp-action="Create">Create New Artist</a>
+        </div>
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="table-responsive">
+            <table class="table table-striped table-hover align-middle">
+                <thead class="table-dark">
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.ArtistName)</th>
+                        <th>@Html.DisplayNameFor(model => model.ArtistDescription)</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.ArtistName)</td>
+                            <td>@Html.DisplayFor(modelItem => item.ArtistDescription)</td>
+                            <td class="text-end">
+                                <a class="btn btn-sm btn-outline-secondary me-2" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                <a class="btn btn-sm btn-outline-info me-2" asp-action="Details" asp-route-id="@item.Id">Details</a>
+                                <a class="btn btn-sm btn-outline-danger" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    @if (!Model.Any())
+    {
+        <div class="row text-white fw-bold">
+            <div class="col-12">
+                <p class="text-center">No artists found.</p>
+            </div>
+        </div>
+    }
+</div>

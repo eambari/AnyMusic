@@ -1,4 +1,5 @@
-﻿using AnyMusic.Domain.Identity;
+﻿using AnyMusic.Domain.Domain.BaseClass;
+using AnyMusic.Domain.Identity;
 using System.ComponentModel.DataAnnotations;
 
 namespace AnyMusic.Domain.Domain

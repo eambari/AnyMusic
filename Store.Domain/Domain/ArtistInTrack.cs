@@ -1,4 +1,6 @@
-﻿namespace AnyMusic.Domain.Domain
+﻿using AnyMusic.Domain.Domain.BaseClass;
+
+namespace AnyMusic.Domain.Domain
 {
     public class ArtistInTrack : BaseEntity
     {

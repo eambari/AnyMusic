@@ -1,4 +1,5 @@
-﻿using AnyMusic.Domain.Domain;
+﻿using AnyMusic.Domain.Domain.BaseClass;
+using AnyMusic.Domain.Domain.Enums;
 using System.ComponentModel.DataAnnotations;
 
 namespace AnyMusic.Domain.Domain
@@ -14,8 +15,9 @@ namespace AnyMusic.Domain.Domain
         [Required]
         public string? AlbumCoverImage { get; set; }
 
+
         [Required]
-        public string? Genre { get; set; }
+        public GENRE Genre { get; set; }
         public virtual ICollection<Track>? Tracks { get; set; }
         public virtual ICollection<ArtistInAlbum>? Artists { get; set; }
     }

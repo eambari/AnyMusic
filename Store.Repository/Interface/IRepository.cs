@@ -1,4 +1,4 @@
-﻿using AnyMusic.Domain.Domain;
+﻿using AnyMusic.Domain.Domain.BaseClass;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AnyMusic.Domain.Domain
+namespace AnyMusic.Domain.Domain.BaseClass
 {
     public class BaseEntity
     {

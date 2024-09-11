@@ -1,0 +1,45 @@
+﻿@model IEnumerable<AnyMusic.Domain.Domain.Album>
+
+@{
+    ViewData["Title"] = "Albums";
+}
+
+<div class="container mt-5">
+    <div class="d-flex flex-row justify-content-between mt-5 mb-5 text-white">
+        <h1 class="display-4">Browse All Albums</h1>
+        <div class="d-flex flex-column justify-content-center">
+            <a class="btn btn-dark" asp-action="Create">Create New Album</a>
+        </div>
+    </div>
+
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+        @foreach (var item in Model)
+        {
+            <div class="col">
+                <div class="card album-card universe-card shadow-sm h-100">
+                    <img src="@item.AlbumCoverImage" class="card-img-top" alt="@item.AlbumName">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.AlbumName</h5>
+                        <p class="card-text">@item.AlbumDescription</p>
+                        <ul class="list-unstyled">
+                         @*    <li><strong>Price:</strong> €@item.AlbumPrice</li>
+                            <li><strong>By:</strong> @item.Artist.StageName</li> *@
+                            <li><strong>Genre:</strong> @item.Genre.ToString()</li>
+                        </ul>
+                    </div>
+                    <div class="card-footer text-center">
+                        <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-outline-secondary btn-sm stretched-link">Details</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+    @if (!Model.Any())
+    {
+        <div class="row text-white fw-bold">
+            <div class="col-12">
+                <p class="text-center">No albums found.</p>
+            </div>
+        </div>
+    }
+</div>

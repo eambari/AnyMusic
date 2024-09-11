@@ -1,0 +1,50 @@
+﻿@using AnyMusic.Domain.Domain.Enums
+@model AnyMusic.Domain.Domain.Album
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Album</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="AlbumName" class="control-label"></label>
+                <input asp-for="AlbumName" class="form-control" />
+                <span asp-validation-for="AlbumName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AlbumDescription" class="control-label"></label>
+                <input asp-for="AlbumDescription" class="form-control" />
+                <span asp-validation-for="AlbumDescription" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="AlbumCoverImage" class="control-label"></label>
+                <input asp-for="AlbumCoverImage" class="form-control" />
+                <span asp-validation-for="AlbumCoverImage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Genre" class="control-label"></label>
+                @Html.DropDownList("GENRE",
+                         Html.GetEnumSelectList<GENRE>(),
+                         "Select Genre", new { @class = "form-control" })
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

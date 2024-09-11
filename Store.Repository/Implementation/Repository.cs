@@ -1,4 +1,4 @@
-﻿using AnyMusic.Domain.Domain;
+﻿using AnyMusic.Domain.Domain.BaseClass;
 using AnyMusic.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using System;
