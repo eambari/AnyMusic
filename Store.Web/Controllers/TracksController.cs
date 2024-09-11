@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AnyMusic.Domain.Domain;
 using AnyMusic.Repository;
+using AnyMusic.Domain.Domain.ViewModels;
 
 namespace AnyMusic.Web.Controllers
 {
@@ -48,27 +49,60 @@ namespace AnyMusic.Web.Controllers
         // GET: Tracks/Create
         public IActionResult Create()
         {
-            ViewData["AlbumId"] = new SelectList(_context.Albums, "Id", "AlbumCoverImage");
-            return View();
+            var viewModel = new TrackViewModel
+            {
+                Track = new Track(),
+                Artists = _context.Artists.Select(a => new SelectListItem
+                {
+                    Value = a.Id.ToString(),
+                    Text = a.ArtistName
+                })
+            };
+
+            ViewData["AlbumId"] = new SelectList(_context.Albums, "Id", "AlbumName");
+            return View(viewModel);
         }
 
         // POST: Tracks/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("TrackName,AlbumId,Duration,Rating,Id")] Track track)
+        public async Task<IActionResult> Create(TrackViewModel viewModel)
         {
             if (ModelState.IsValid)
             {
-                track.Id = Guid.NewGuid();
-                _context.Add(track);
+                viewModel.Track.Id = Guid.NewGuid();
+
+                // Add the track to the database
+                _context.Add(viewModel.Track);
+
+                // Add the selected artists
+                foreach (var artistId in viewModel.SelectedArtistIds)
+                {
+                    var artistInTrack = new ArtistInTrack
+                    {
+                        Id = Guid.NewGuid(),
+                        TrackId = viewModel.Track.Id,
+                        ArtistId = artistId
+                    };
+                    _context.Add(artistInTrack);
+                }
+
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["AlbumId"] = new SelectList(_context.Albums, "Id", "AlbumCoverImage", track.AlbumId);
-            return View(track);
+
+            // Repopulate SelectList if ModelState is invalid
+            viewModel.Artists = _context.Artists.Select(a => new SelectListItem
+            {
+                Value = a.Id.ToString(),
+                Text = a.ArtistName
+            });
+
+            ViewData["AlbumId"] = new SelectList(_context.Albums, "Id", "AlbumName", viewModel.Track.AlbumId);
+
+            return View(viewModel);
         }
+
 
         // GET: Tracks/Edit/5
         public async Task<IActionResult> Edit(Guid? id)

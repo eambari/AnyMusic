@@ -1,53 +1,45 @@
-﻿@model IEnumerable<AnyMusic.Domain.Domain.Track>
+﻿@model List<AnyMusic.Domain.Domain.Track>
+
+
 
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<div class="container">
+    <div class="m-3">
+        <a class="btn btn-secondary" asp-controller="Tracks" asp-action="Create">Add new Track</a>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.TrackName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Album)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Duration)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Rating)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.TrackName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Album.AlbumCoverImage)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Duration)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Rating)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    </div>
+
+    @for(int i=0;i< Model.Count; i++)
+    {
+        var item = Model[i];
+        if(i % 3 == 0)
+        {
+            @:<div class="row">
+        }
+        <div class="col-3 m-4">
+
+            <div class="card" style="width: 18rem; height: 35rem">
+                <img class="card-img-top" src="@item.Album.AlbumCoverImage" alt="Card image cap">
+                <div class="card-body">
+                    <h5 class="card-title">@item.TrackName</h5>
+                @*     <h5 class="card-title">Artist: @item.Artists</h5> *@
+                    <p class="card-text">@item.Duration min</p>
+               
+                </div>
+                <div class="card-footer">
+                    <a asp-controller="Tracks" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-dark">Edit</a>
+                    <a asp-controller="Tracks" asp-action="AddToCart" asp-route-id="@item.Id" class="btn btn-secondary">Add to Cart</a>
+                </div>
+
+            </div>
+        </div>
+
+        if(i % 3 == 2)
+        {
+            @:</div>
+        }
+    }
+</div>

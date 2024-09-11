@@ -9,6 +9,7 @@ namespace AnyMusic.Domain.Domain
         [Required]
         public string? ArtistName { get; set; }
         public string? ArtistDescription { get; set; }
+
         public virtual ICollection<ArtistInAlbum>? Albums { get; set; }
         public virtual ICollection<ArtistInTrack>? Tracks { get; set; }
     }

@@ -1,8 +1,4 @@
-﻿@model AnyMusic.Domain.Domain.Track
-
-@{
-    ViewData["Title"] = "Create";
-}
+﻿@model AnyMusic.Domain.Domain.ViewModels.TrackViewModel
 
 <h1>Create</h1>
 
@@ -13,24 +9,31 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="TrackName" class="control-label"></label>
-                <input asp-for="TrackName" class="form-control" />
-                <span asp-validation-for="TrackName" class="text-danger"></span>
+                <label asp-for="Track.TrackName" class="control-label"></label>
+                <input asp-for="Track.TrackName" class="form-control" />
+                <span asp-validation-for="Track.TrackName" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="AlbumId" class="control-label"></label>
-                <select asp-for="AlbumId" class ="form-control" asp-items="ViewBag.AlbumId"></select>
+                <label asp-for="Track.AlbumId" class="control-label"></label>
+                <select asp-for="Track.AlbumId" class="form-control" asp-items="ViewBag.AlbumId"></select>
             </div>
             <div class="form-group">
-                <label asp-for="Duration" class="control-label"></label>
-                <input asp-for="Duration" class="form-control" />
-                <span asp-validation-for="Duration" class="text-danger"></span>
+                <label asp-for="Track.Duration" class="control-label"></label>
+                <input asp-for="Track.Duration" class="form-control" />
+                <span asp-validation-for="Track.Duration" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="Rating" class="control-label"></label>
-                <input asp-for="Rating" class="form-control" />
-                <span asp-validation-for="Rating" class="text-danger"></span>
+                <label asp-for="Track.Rating" class="control-label"></label>
+                <input asp-for="Track.Rating" class="form-control" />
+                <span asp-validation-for="Track.Rating" class="text-danger"></span>
             </div>
+            <div class="form-group">
+                <label for="SelectedArtistIds" class="control-label">Artists</label>
+                <select asp-for="SelectedArtistIds" class="form-control" asp-items="Model.Artists" multiple="multiple"></select>
+                <span asp-validation-for="SelectedArtistIds" class="text-danger"></span>
+            </div>
+
+
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />
             </div>
@@ -43,5 +46,7 @@
 </div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
