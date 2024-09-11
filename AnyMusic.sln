@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34701.34
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnyMusic.Domain", "Store.Domain\AnyMusic.Domain.csproj", "{B3AD0A92-B415-4599-81CC-1E1048142722}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnyMusic.Repository", "Store.Repository\AnyMusic.Repository.csproj", "{8357ACFF-C359-4614-A976-F66CEAFCFBFD}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B3AD0A92-B415-4599-81CC-1E1048142722} = {B3AD0A92-B415-4599-81CC-1E1048142722}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnyMusic.Service", "Store.Service\AnyMusic.Service.csproj", "{CCA7A605-4482-4561-87F5-080BCE153BDF}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8357ACFF-C359-4614-A976-F66CEAFCFBFD} = {8357ACFF-C359-4614-A976-F66CEAFCFBFD}
+		{B3AD0A92-B415-4599-81CC-1E1048142722} = {B3AD0A92-B415-4599-81CC-1E1048142722}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AnyMusic.Web", "Store.Web\AnyMusic.Web.csproj", "{DBAD9F11-862A-4A64-9389-12C0F7EDD493}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8357ACFF-C359-4614-A976-F66CEAFCFBFD} = {8357ACFF-C359-4614-A976-F66CEAFCFBFD}
+		{B3AD0A92-B415-4599-81CC-1E1048142722} = {B3AD0A92-B415-4599-81CC-1E1048142722}
+		{CCA7A605-4482-4561-87F5-080BCE153BDF} = {CCA7A605-4482-4561-87F5-080BCE153BDF}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B3AD0A92-B415-4599-81CC-1E1048142722}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3AD0A92-B415-4599-81CC-1E1048142722}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3AD0A92-B415-4599-81CC-1E1048142722}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3AD0A92-B415-4599-81CC-1E1048142722}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8357ACFF-C359-4614-A976-F66CEAFCFBFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8357ACFF-C359-4614-A976-F66CEAFCFBFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8357ACFF-C359-4614-A976-F66CEAFCFBFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8357ACFF-C359-4614-A976-F66CEAFCFBFD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCA7A605-4482-4561-87F5-080BCE153BDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCA7A605-4482-4561-87F5-080BCE153BDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCA7A605-4482-4561-87F5-080BCE153BDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCA7A605-4482-4561-87F5-080BCE153BDF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DBAD9F11-862A-4A64-9389-12C0F7EDD493}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DBAD9F11-862A-4A64-9389-12C0F7EDD493}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DBAD9F11-862A-4A64-9389-12C0F7EDD493}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DBAD9F11-862A-4A64-9389-12C0F7EDD493}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {64292CF7-1E41-49B3-BC89-EF97920D7834}
+	EndGlobalSection
+EndGlobal
