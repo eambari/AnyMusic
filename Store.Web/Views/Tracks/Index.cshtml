@@ -32,6 +32,7 @@
                 <div class="card-footer">
                     <a asp-controller="Tracks" asp-action="Edit" asp-route-id="@item.Id" class="btn btn-dark">Edit</a>
                     <a asp-controller="Tracks" asp-action="AddToCart" asp-route-id="@item.Id" class="btn btn-secondary">Add to Cart</a>
+                   <a asp-controller="Playlists" asp-action="AddToPlaylist" asp-route-trackId="@item.Id" class="btn btn-success">Add to Playlist</a>
                 </div>
 
             </div>

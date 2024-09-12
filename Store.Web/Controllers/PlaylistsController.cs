@@ -7,9 +7,14 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AnyMusic.Domain.Domain;
 using AnyMusic.Repository;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using AnyMusic.Domain.Domain.ViewModels;
 
 namespace AnyMusic.Web.Controllers
 {
+
+   
     public class PlaylistsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -19,11 +24,63 @@ namespace AnyMusic.Web.Controllers
             _context = context;
         }
 
+
+        [Authorize]
+        public async Task<IActionResult> AddToPlaylist(Guid trackId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get the current user's ID
+            var playlists = await _context.Playlists
+                                          .Where(p => p.UserId == userId)
+                                          .ToListAsync();
+
+            ViewBag.PlaylistId = new SelectList(playlists, "Id", "Name");
+            var track = await _context.Tracks.FindAsync(trackId);
+
+            if (track == null)
+            {
+                return NotFound();
+            }
+
+            var model = new AddToPlaylistViewModel
+            {
+                TrackId = trackId,
+                TrackName = track.TrackName
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddToPlaylist(AddToPlaylistViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var trackInPlaylist = new TrackInPlaylist
+                {
+                    Id = Guid.NewGuid(),
+                    PlaylistId = model.PlaylistId,
+                    TrackId = model.TrackId
+                };
+
+                _context.TrackInPlaylists.Add(trackInPlaylist);
+                await _context.SaveChangesAsync();
+                return RedirectToAction("Index", "Tracks");
+            }
+
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var playlists = await _context.Playlists.Where(p => p.UserId == userId).ToListAsync();
+            ViewBag.PlaylistId = new SelectList(playlists, "Id", "Name", model.PlaylistId);
+
+            return View(model);
+        }
+
+
+
         // GET: Playlists
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Playlists.Include(p => p.User);
-            return View(await applicationDbContext.ToListAsync());
+            return View(await _context.Playlists.ToListAsync());
         }
 
         // GET: Playlists/Details/5
@@ -35,7 +92,6 @@ namespace AnyMusic.Web.Controllers
             }
 
             var playlist = await _context.Playlists
-                .Include(p => p.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (playlist == null)
             {
@@ -48,7 +104,6 @@ namespace AnyMusic.Web.Controllers
         // GET: Playlists/Create
         public IActionResult Create()
         {
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id");
             return View();
         }
 
@@ -57,16 +112,16 @@ namespace AnyMusic.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Name,UserId,Id")] Playlist playlist)
+        public async Task<IActionResult> Create([Bind("Name,Id")] Playlist playlist)
         {
             if (ModelState.IsValid)
             {
                 playlist.Id = Guid.NewGuid();
+                playlist.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
                 _context.Add(playlist);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", playlist.UserId);
             return View(playlist);
         }
 
@@ -83,7 +138,6 @@ namespace AnyMusic.Web.Controllers
             {
                 return NotFound();
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", playlist.UserId);
             return View(playlist);
         }
 
@@ -92,7 +146,7 @@ namespace AnyMusic.Web.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Guid id, [Bind("Name,UserId,Id")] Playlist playlist)
+        public async Task<IActionResult> Edit(Guid id, [Bind("Name,Id")] Playlist playlist)
         {
             if (id != playlist.Id)
             {
@@ -119,7 +173,6 @@ namespace AnyMusic.Web.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.Users, "Id", "Id", playlist.UserId);
             return View(playlist);
         }
 
@@ -132,7 +185,6 @@ namespace AnyMusic.Web.Controllers
             }
 
             var playlist = await _context.Playlists
-                .Include(p => p.User)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (playlist == null)
             {

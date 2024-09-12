@@ -9,6 +9,7 @@ namespace AnyMusic.Repository.Implementation
 {
     public class UserRepository : IUserRepository
     {
+
         private readonly ApplicationDbContext context;
         private DbSet<AnyMusicUser> entities;
         string errorMessage = string.Empty;

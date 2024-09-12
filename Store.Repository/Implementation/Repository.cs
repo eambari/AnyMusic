@@ -9,10 +9,10 @@ using System.Threading.Tasks;
 
 namespace AnyMusic.Repository.Implementation
 {
-    public class Repository<T> : IRepository<T> where T : BaseEntity
+    public abstract class Repository<T> : IRepository<T> where T : BaseEntity
     {
         private readonly ApplicationDbContext context;
-        private DbSet<T> entities;
+        protected DbSet<T> entities;
         //string errorMessage = string.Empty;
 
         public Repository(ApplicationDbContext context)
@@ -20,15 +20,7 @@ namespace AnyMusic.Repository.Implementation
             this.context = context;
             entities = context.Set<T>();
         }
-        public IEnumerable<T> GetAll()
-        {
-            return entities.AsEnumerable();
-        }
-
-        public T Get(Guid? id)
-        {
-            return entities.First(s => s.Id == id);
-        }
+     
         public T Insert(T entity)
         {
             if (entity == null)
@@ -72,5 +64,8 @@ namespace AnyMusic.Repository.Implementation
             context.SaveChanges();
             return entities;
         }
+
+        public abstract IEnumerable<T> GetAll();
+        public abstract T Get(Guid? id);
     }
 }
