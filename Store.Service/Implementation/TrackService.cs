@@ -12,10 +12,10 @@ namespace AnyMusic.Service.Implementation
     public class TrackService : ITrackService
     {
         private readonly IRepository<Track> _trackRepo;
-        private readonly PlaylistService _playlistService;
-        private readonly TrackInPlaylistService _trackInPlaylistService;
+        private readonly IPlaylistService _playlistService;
+        private readonly ITrackInPlaylistService _trackInPlaylistService;
 
-        public TrackService(IRepository<Track> trackRepo, PlaylistService playlistService, TrackInPlaylistService trackInPlaylistService)
+        public TrackService(IRepository<Track> trackRepo, IPlaylistService playlistService, ITrackInPlaylistService trackInPlaylistService)
         {
             _trackRepo = trackRepo;
             _playlistService = playlistService;

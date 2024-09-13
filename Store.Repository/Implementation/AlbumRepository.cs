@@ -1,4 +1,4 @@
-﻿using AnyMusic.Domain.Domain.BaseClass;
+﻿using AnyMusic.Domain.Domain;
 using AnyMusic.Repository.Interface;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -9,19 +9,20 @@ using System.Threading.Tasks;
 
 namespace AnyMusic.Repository.Implementation
 {
-
-    public class Repository<T> : IRepository<T> where T : BaseEntity
+    public class AlbumRepository : IAlbumRepository
     {
-        private readonly ApplicationDbContext context;
-        private DbSet<T> entities;
 
-        public Repository(ApplicationDbContext context)
+        private readonly ApplicationDbContext context;
+        private DbSet<Album> entities;
+        string errorMessage = string.Empty;
+
+        public AlbumRepository(ApplicationDbContext context)
         {
             this.context = context;
-            entities = context.Set<T>();
+            entities = context.Set<Album>();
         }
 
-        public T Delete(T entity)
+        public void Delete(Album entity)
         {
             if (entity == null)
             {
@@ -29,22 +30,30 @@ namespace AnyMusic.Repository.Implementation
             }
             entities.Remove(entity);
             context.SaveChanges();
-            return entity;
         }
 
-        public T Get(Guid id)
+        public Album Get(Guid id)
         {
-            return entities.First(z => z.Id == id);
+            if (id == null)
+                throw new ArgumentNullException(nameof(id));
+
+            return context.Albums
+                .Include(a => a.Tracks)
+                .Include(a => a.Artists)
+                    .ThenInclude(ai => ai.Artist)
+                .SingleOrDefault(a => a.Id == id);
         }
 
-     
-
-        public IEnumerable<T> GetAll()
+        public IEnumerable<Album> GetAll()
         {
-            return entities.AsEnumerable();
+            return context.Albums
+                  .Include(a => a.Tracks)
+                  .Include(a => a.Artists)
+                      .ThenInclude(ai => ai.Artist)
+                  .AsEnumerable();
         }
 
-        public T Insert(T entity)
+        public void Insert(Album entity)
         {
             if (entity == null)
             {
@@ -52,21 +61,9 @@ namespace AnyMusic.Repository.Implementation
             }
             entities.Add(entity);
             context.SaveChanges();
-            return entity;
         }
 
-        public List<T> InsertMany(List<T> entities)
-        {
-            if (entities == null)
-            {
-                throw new ArgumentNullException("entity");
-            }
-            entities.AddRange(entities);
-            context.SaveChanges();
-            return entities;
-        }
-
-        public T Update(T entity)
+        public void Update(Album entity)
         {
             if (entity == null)
             {
@@ -74,7 +71,6 @@ namespace AnyMusic.Repository.Implementation
             }
             entities.Update(entity);
             context.SaveChanges();
-            return entity;
         }
     }
 }

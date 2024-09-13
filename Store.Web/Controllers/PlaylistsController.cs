@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AnyMusic.Domain.Domain;
 using AnyMusic.Repository;
+using AnyMusic.Service;
 using Microsoft.AspNetCore.Authorization;
 using System.Security.Claims;
 using AnyMusic.Domain.Domain.ViewModels;
+using AnyMusic.Service.Interface;
 
 namespace AnyMusic.Web.Controllers
 {
@@ -19,32 +21,42 @@ namespace AnyMusic.Web.Controllers
     {
         private readonly ApplicationDbContext _context;
 
-        public PlaylistsController(ApplicationDbContext context)
+        private readonly IPlaylistService _playlistService;
+        private readonly ITrackService _trackService;
+        private readonly ITrackInPlaylistService _trackInPlaylistService;
+
+        public PlaylistsController(ApplicationDbContext context, IPlaylistService playlistService, ITrackService trackService, ITrackInPlaylistService trackInPlaylistService)
         {
             _context = context;
+            _playlistService = playlistService;
+            _trackService = trackService;
+            _trackInPlaylistService = trackInPlaylistService;
         }
 
 
         [Authorize]
         public async Task<IActionResult> AddToPlaylist(Guid trackId)
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get the current user's ID
-            var playlists = await _context.Playlists
-                                          .Where(p => p.UserId == userId)
-                                          .ToListAsync();
-
-            ViewBag.PlaylistId = new SelectList(playlists, "Id", "Name");
-            var track = await _context.Tracks.FindAsync(trackId);
-
+            var track = _trackService.GetDetailsForTrack(trackId);
             if (track == null)
             {
                 return NotFound();
             }
 
+            // Get all playlists for the current user
+            var userId = User.Identity.Name; // Assuming the user ID is the username
+            var playlists = _playlistService.GetAllUserPlaylists(userId);
+
+            // Create ViewModel
             var model = new AddToPlaylistViewModel
             {
                 TrackId = trackId,
-                TrackName = track.TrackName
+                TrackName = track.TrackName,
+                Playlists = playlists.Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.Name
+                }).ToList()
             };
 
             return View(model);
@@ -56,21 +68,27 @@ namespace AnyMusic.Web.Controllers
         {
             if (ModelState.IsValid)
             {
-                var trackInPlaylist = new TrackInPlaylist
-                {
-                    Id = Guid.NewGuid(),
-                    PlaylistId = model.PlaylistId,
-                    TrackId = model.TrackId
-                };
+                var track = _trackService.GetDetailsForTrack(model.TrackId);
+                var playlist = _playlistService.GetDetailsForUserPlaylist(model.PlaylistId);
 
-                _context.TrackInPlaylists.Add(trackInPlaylist);
-                await _context.SaveChangesAsync();
-                return RedirectToAction("Index", "Tracks");
+                if (track != null && playlist != null)
+                {
+                    // Add track to playlist
+                    _trackService.AddTrackToUserPlaylist(playlist, track);
+                    return RedirectToAction("Index", "Tracks");
+                }
+
+                ModelState.AddModelError("", "Invalid track or playlist.");
             }
 
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var playlists = await _context.Playlists.Where(p => p.UserId == userId).ToListAsync();
-            ViewBag.PlaylistId = new SelectList(playlists, "Id", "Name", model.PlaylistId);
+            // Reload playlists in case of error
+            var userId = User.Identity.Name;
+            model.Playlists = _playlistService.GetAllUserPlaylists(userId)
+                .Select(p => new SelectListItem
+                {
+                    Value = p.Id.ToString(),
+                    Text = p.Name
+                }).ToList();
 
             return View(model);
         }

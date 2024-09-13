@@ -23,6 +23,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Store.Domain\AnyMusic.Domain.csproj" />
     <ProjectReference Include="..\Store.Repository\AnyMusic.Repository.csproj" />
+	  <ProjectReference Include="..\Store.Service\AnyMusic.Service.csproj" />
   </ItemGroup>
 
 </Project>
