@@ -15,12 +15,9 @@ using AnyMusic.Service.Interface;
 
 namespace AnyMusic.Web.Controllers
 {
-
-   
     public class PlaylistsController : Controller
     {
         private readonly ApplicationDbContext _context;
-
         private readonly IPlaylistService _playlistService;
         private readonly ITrackService _trackService;
         private readonly ITrackInPlaylistService _trackInPlaylistService;
@@ -32,8 +29,6 @@ namespace AnyMusic.Web.Controllers
             _trackService = trackService;
             _trackInPlaylistService = trackInPlaylistService;
         }
-
-
         [Authorize]
         public async Task<IActionResult> AddToPlaylist(Guid trackId)
         {
@@ -42,15 +37,11 @@ namespace AnyMusic.Web.Controllers
             {
                 return NotFound();
             }
-
-            // Get all playlists for the current user
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Assuming the user ID is the username
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var playlists = _playlistService.GetAllUserPlaylists(userId)
-                                                     
                                                   .Where(pl => !pl.TracksInPlaylists.Any(tp => tp.TrackId == trackId)) // Exclude playlists that already contain the track
                                                   .ToList();
 
-            // Create ViewModel
             var model = new AddToPlaylistViewModel
             {
                 TrackId = trackId,
@@ -73,18 +64,14 @@ namespace AnyMusic.Web.Controllers
             {
                 var track = _trackService.GetDetailsForTrack(model.TrackId);
                 var playlist = _playlistService.GetDetailsForUserPlaylist(model.PlaylistId);
-
                 if (track != null && playlist != null)
                 {
-                    // Add track to playlist
                     _trackService.AddTrackToUserPlaylist(playlist, track);
                     return RedirectToAction("Index", "Tracks");
                 }
 
                 ModelState.AddModelError("", "Invalid track or playlist.");
             }
-
-            // Reload playlists in case of error
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             model.Playlists = _playlistService.GetAllUserPlaylists(userId)
                 .Select(p => new SelectListItem
@@ -100,7 +87,7 @@ namespace AnyMusic.Web.Controllers
         public async Task<IActionResult> RemoveTrackFromPlaylist(Guid playlistId, Guid trackId)
         {
             var trackInPlaylist = await _context.TrackInPlaylists
-         .FirstOrDefaultAsync(tip => tip.PlaylistId == playlistId && tip.TrackId == trackId);
+                                        .FirstOrDefaultAsync(tip => tip.PlaylistId == playlistId && tip.TrackId == trackId);
 
             if (trackInPlaylist == null)
             {
