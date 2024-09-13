@@ -22,7 +22,6 @@
                     <tr>
                         <th>@Html.DisplayNameFor(model => model.Name)</th>
                         <th>#TRACKS</th>
-                       
                         <th></th>
                     </tr>
                 </thead>
@@ -31,7 +30,7 @@
                     {
                         <tr>
                             <td>@Html.DisplayFor(modelItem => item.Name)</td>
-                            <td>@item.TracksInPlaylists?.Count</td> <!-- Display the count of tracks -->
+                            <td>@item.TracksInPlaylists?.Count</td> 
                             <td class="text-end">
                                 <a class="btn btn-sm btn-outline-secondary me-2" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
                                 <a class="btn btn-sm btn-outline-info me-2" asp-action="Details" asp-route-id="@item.Id">Details</a>

@@ -42,15 +42,15 @@ namespace AnyMusic.Web.Controllers
             {
                 return NotFound();
             }
-
             // Get all playlists for the current user
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Assuming the user ID is the username
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); 
+
             var playlists = _playlistService.GetAllUserPlaylists(userId)
                                                      
                                                   .Where(pl => !pl.TracksInPlaylists.Any(tp => tp.TrackId == trackId)) // Exclude playlists that already contain the track
                                                   .ToList();
 
-            // Create ViewModel
+
             var model = new AddToPlaylistViewModel
             {
                 TrackId = trackId,
@@ -76,7 +76,6 @@ namespace AnyMusic.Web.Controllers
 
                 if (track != null && playlist != null)
                 {
-                    // Add track to playlist
                     _trackService.AddTrackToUserPlaylist(playlist, track);
                     return RedirectToAction("Index", "Tracks");
                 }
@@ -84,7 +83,7 @@ namespace AnyMusic.Web.Controllers
                 ModelState.AddModelError("", "Invalid track or playlist.");
             }
 
-            // Reload playlists in case of error
+            
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             model.Playlists = _playlistService.GetAllUserPlaylists(userId)
                 .Select(p => new SelectListItem

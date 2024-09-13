@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using AnyMusic.Domain.Domain;
 using AnyMusic.Repository;
 using AnyMusic.Service.Interface;
+using AnyMusic.Domain.Domain.ViewModels;
 
 namespace AnyMusic.Web.Controllers
 {
@@ -27,6 +28,63 @@ namespace AnyMusic.Web.Controllers
         {
             return View(await _context.Albums.ToListAsync());
         }
+
+       
+        public async Task<IActionResult> AddTrackToAlbum(Guid albumId)
+        {
+            // Fetch all tracks that have no associated album
+            var tracksWithoutAlbum = await _context.Tracks
+                                         .Where(t => t.AlbumId == null)
+                                       .ToListAsync();
+
+
+            var model = new AddToAlbum
+            {
+                AlbumId = albumId,
+                Tracks = tracksWithoutAlbum.Select(track => new SelectListItem
+                {
+                    Value = track.Id.ToString(),
+                    Text = $"{track.TrackName} (Duration: {track.Duration}, Rating: {track.Rating})"
+                }).ToList()
+            };
+
+            return View(model);
+        }
+
+       
+        [HttpPost]
+        public async Task<IActionResult> AddTrackToAlbum(Guid albumId, Guid trackId)
+        {
+            var track = await _context.Tracks.FindAsync(trackId);
+            var album = await _context.Albums.FindAsync(albumId);
+
+            if (track == null || album == null)
+            {
+                return RedirectToAction("Index");
+            }
+
+            //  track with the album
+            track.AlbumId = albumId;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = albumId });
+        }
+
+        public async Task<IActionResult> RemoveTrackFromAlbum(Guid albumId, Guid trackId)
+        {
+            var track = await _context.Tracks.FindAsync(trackId);
+
+            if (track == null || track.AlbumId != albumId)
+            {
+                return NotFound();
+            }
+            track.AlbumId = null;
+
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = albumId });
+        }
+
 
         // GET: Albums/Details/5
         public async Task<IActionResult> Details(Guid id)

@@ -23,7 +23,9 @@ namespace AnyMusic.Web.Controllers
         // GET: Tracks
         public async Task<IActionResult> Index()
         {
-            var applicationDbContext = _context.Tracks.Include(t => t.Album);
+            var applicationDbContext = _context.Tracks.Include(t => t.Album)
+                                                      .Include(t => t.Artists) 
+                                                      .ThenInclude(at => at.Artist); 
             return View(await applicationDbContext.ToListAsync());
         }
 
@@ -37,6 +39,8 @@ namespace AnyMusic.Web.Controllers
 
             var track = await _context.Tracks
                 .Include(t => t.Album)
+                 .Include(t => t.Artists) // Include artists for the track
+                    .ThenInclude(at => at.Artist) // Include actual artist entity
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (track == null)
             {
@@ -59,7 +63,7 @@ namespace AnyMusic.Web.Controllers
                 })
             };
 
-            ViewData["AlbumId"] = new SelectList(_context.Albums, "Id", "AlbumName");
+            //ViewData["AlbumId"] = new SelectList(_context.Albums, "Id", "AlbumName");
             return View(viewModel);
         }
 
@@ -98,7 +102,7 @@ namespace AnyMusic.Web.Controllers
                 Text = a.ArtistName
             });
 
-            ViewData["AlbumId"] = new SelectList(_context.Albums, "Id", "AlbumName", viewModel.Track.AlbumId);
+            //ViewData["AlbumId"] = new SelectList(_context.Albums, "Id", "AlbumName", viewModel.Track.AlbumId);
 
             return View(viewModel);
         }

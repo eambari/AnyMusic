@@ -12,7 +12,7 @@ namespace AnyMusic.Domain.Domain
     {
         [Required]
         public string? TrackName { get; set; }
-        public Guid AlbumId { get; set; }
+        public Guid? AlbumId { get; set; }
         public virtual Album? Album { get; set; }
 
         [Required]
