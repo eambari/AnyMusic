@@ -44,8 +44,11 @@ namespace AnyMusic.Web.Controllers
             }
 
             // Get all playlists for the current user
-            var userId = User.Identity.Name; // Assuming the user ID is the username
-            var playlists = _playlistService.GetAllUserPlaylists(userId);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Assuming the user ID is the username
+            var playlists = _playlistService.GetAllUserPlaylists(userId)
+                                                     
+                                                  .Where(pl => !pl.TracksInPlaylists.Any(tp => tp.TrackId == trackId)) // Exclude playlists that already contain the track
+                                                  .ToList();
 
             // Create ViewModel
             var model = new AddToPlaylistViewModel
@@ -82,7 +85,7 @@ namespace AnyMusic.Web.Controllers
             }
 
             // Reload playlists in case of error
-            var userId = User.Identity.Name;
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             model.Playlists = _playlistService.GetAllUserPlaylists(userId)
                 .Select(p => new SelectListItem
                 {
@@ -94,11 +97,36 @@ namespace AnyMusic.Web.Controllers
         }
 
 
+        public async Task<IActionResult> RemoveTrackFromPlaylist(Guid playlistId, Guid trackId)
+        {
+            var trackInPlaylist = await _context.TrackInPlaylists
+         .FirstOrDefaultAsync(tip => tip.PlaylistId == playlistId && tip.TrackId == trackId);
+
+            if (trackInPlaylist == null)
+            {
+                return NotFound();
+            }
+
+            _context.TrackInPlaylists.Remove(trackInPlaylist);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", new { id = playlistId });
+        }
+
+
 
         // GET: Playlists
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Playlists.ToListAsync());
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+
+            // Filter playlists based on the current user's ID
+            var userPlaylists = await _context.Playlists
+                .Where(p => p.UserId == userId)
+                .Include(p => p.TracksInPlaylists)
+                .ToListAsync();
+
+            return View(userPlaylists);
         }
 
         // GET: Playlists/Details/5
@@ -110,7 +138,9 @@ namespace AnyMusic.Web.Controllers
             }
 
             var playlist = await _context.Playlists
-                .FirstOrDefaultAsync(m => m.Id == id);
+          .Include(p => p.TracksInPlaylists)
+          .ThenInclude(tp => tp.Track) // Include the Track details
+          .FirstOrDefaultAsync(p => p.Id == id);
             if (playlist == null)
             {
                 return NotFound();

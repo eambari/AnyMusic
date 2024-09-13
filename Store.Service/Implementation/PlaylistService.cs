@@ -11,38 +11,38 @@ namespace AnyMusic.Service.Implementation
 {
     public class PlaylistService : IPlaylistService
     {
+        //private readonly IRepository<Playlist> _playlistRepository;
+        private readonly IPlaylistRepository playlistRepository1;
 
-
-        private readonly IRepository<Playlist> _playlistRepository;
-
-        public PlaylistService(IRepository<Playlist> playlistRepository)
+        public PlaylistService(IPlaylistRepository playlistRepository1)
         {
-            _playlistRepository = playlistRepository;
+            //_playlistRepository = playlistRepository;
+            this.playlistRepository1 = playlistRepository1;
         }
 
         public void CreateNewUserPlaylist(Playlist a)
         {
-          _playlistRepository.Insert(a);
+            playlistRepository1.Insert(a);
         }
 
         public void DeleteUserPlaylist(Guid id)
         {
-         _playlistRepository.Delete(_playlistRepository.Get(id));
+            playlistRepository1.Delete(playlistRepository1.Get(id));
         }
 
         public List<Playlist> GetAllUserPlaylists(string userId)
         {
-             return _playlistRepository.GetAll().Where(p => p.UserId == userId).ToList();
+             return playlistRepository1.GetAll().Where(p => p.UserId == userId).ToList();
         }
 
         public Playlist GetDetailsForUserPlaylist(Guid id)
         {
-            return _playlistRepository.Get(id);
+            return playlistRepository1.Get(id);
         }
 
         public void UpdateExistingUserPlaylist(Playlist a)
         {
-         _playlistRepository.Update(a); 
+            playlistRepository1.Update(a); 
         }
     }
 }

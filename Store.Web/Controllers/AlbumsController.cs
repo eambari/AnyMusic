@@ -7,16 +7,19 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using AnyMusic.Domain.Domain;
 using AnyMusic.Repository;
+using AnyMusic.Service.Interface;
 
 namespace AnyMusic.Web.Controllers
 {
     public class AlbumsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IAlbumService albumService;
 
-        public AlbumsController(ApplicationDbContext context)
+        public AlbumsController(ApplicationDbContext context,IAlbumService albumService)
         {
             _context = context;
+            this.albumService = albumService;
         }
 
         // GET: Albums
@@ -26,21 +29,10 @@ namespace AnyMusic.Web.Controllers
         }
 
         // GET: Albums/Details/5
-        public async Task<IActionResult> Details(Guid? id)
+        public async Task<IActionResult> Details(Guid id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var album = await _context.Albums
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (album == null)
-            {
-                return NotFound();
-            }
-
-            return View(album);
+          
+            return View(albumService.GetDetailsForAlbum(id));
         }
 
         // GET: Albums/Create

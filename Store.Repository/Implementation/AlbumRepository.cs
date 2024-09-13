@@ -38,9 +38,9 @@ namespace AnyMusic.Repository.Implementation
                 throw new ArgumentNullException(nameof(id));
 
             return context.Albums
-                .Include(a => a.Tracks)
-                .Include(a => a.Artists)
-                    .ThenInclude(ai => ai.Artist)
+               .Include(a => a.Tracks)
+               .ThenInclude(t => t.Artists)
+                .ThenInclude(at => at.Artist) 
                 .SingleOrDefault(a => a.Id == id);
         }
 

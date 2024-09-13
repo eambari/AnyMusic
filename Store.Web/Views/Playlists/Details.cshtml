@@ -10,14 +10,54 @@
     <h4>Playlist</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Name)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Name)
         </dd>
     </dl>
 </div>
+
+<div>
+    <h4>Tracks in Playlist</h4>
+    @if (Model.TracksInPlaylists != null && Model.TracksInPlaylists.Any())
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Track Name</th>
+                    <th>Duration</th>
+                    <th>Rating</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var trackInPlaylist in Model.TracksInPlaylists)
+                {
+                    <tr>
+                        <td>@trackInPlaylist.Track?.TrackName</td>
+                        <td>@trackInPlaylist.Track?.Duration</td>
+                        <td>@trackInPlaylist.Track?.Rating</td>
+                        <td> 
+                            <a asp-action="RemoveTrackFromPlaylist"
+                               asp-route-playlistId="@Model.Id"
+                               asp-route-trackId="@trackInPlaylist.TrackId"
+                               class="btn btn-danger btn-sm">
+                                Remove
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No tracks in this playlist.</p>
+    }
+</div>
+
 <div>
     <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>

@@ -12,11 +12,13 @@ namespace AnyMusic.Service.Implementation
     public class AlbumService : IAlbumService
     {
         private readonly IRepository<Album> _albumRepo;
+        private readonly IAlbumRepository _albumRepository;
      
 
-        public AlbumService(IRepository<Album> albumRepo)
+        public AlbumService(IRepository<Album> albumRepo, IAlbumRepository albumRepository)
         {
             _albumRepo = albumRepo;
+            _albumRepository = albumRepository;
         }
 
 
@@ -37,7 +39,7 @@ namespace AnyMusic.Service.Implementation
 
         public Album GetDetailsForAlbum(Guid id)
         {
-           return _albumRepo.Get(id);
+           return _albumRepository.Get(id);
         }
 
         public void UpdateExistingAlbum(Album a)
