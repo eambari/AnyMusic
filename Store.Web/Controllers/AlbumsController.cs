@@ -190,9 +190,14 @@ namespace AnyMusic.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(Guid id)
         {
-            var album = await _context.Albums.FindAsync(id);
+            var album = albumService.GetDetailsForAlbum(id);
             if (album != null)
             {
+                var idk = album.Tracks;
+                for(var i = 0;i< idk.Count;i++)
+                {
+                    idk.ElementAt(i).AlbumId = null;
+                }
                 _context.Albums.Remove(album);
             }
 

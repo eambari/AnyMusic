@@ -16,7 +16,7 @@ using AnyMusic.Service.Interface;
 namespace AnyMusic.Web.Controllers
 {
 
-   
+    [Authorize]
     public class PlaylistsController : Controller
     {
         private readonly ApplicationDbContext _context;
