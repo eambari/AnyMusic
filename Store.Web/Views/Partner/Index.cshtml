@@ -1,0 +1,25 @@
+﻿@model IEnumerable<AnyMusic.Domain.Domain.ViewModels.PartnerViewModel>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Track Name</th>
+            <th>Artist</th>
+            <th>Album</th>
+            <th>Genre</th>
+            <th>Duration (minutes)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var track in Model)
+        {
+            <tr>
+                <td>@track.TrackName</td>
+                <td>@track.ArtistNames</td>
+                <td>@track.AlbumName</td>
+                <td>@track.GenreNames</td>
+                <td>@track.DurationMinutes</td>
+            </tr>
+        }
+    </tbody>
+</table>
