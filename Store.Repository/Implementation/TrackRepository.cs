@@ -54,6 +54,7 @@ namespace AnyMusic.Repository.Implementation
                   .ThenInclude(at => at.Artist)
               .Include(t => t.TracksInPlaylists)
                   .ThenInclude(tp => tp.Playlist)
+                       .ThenInclude(p => p.User)
               .AsEnumerable();
         }
 

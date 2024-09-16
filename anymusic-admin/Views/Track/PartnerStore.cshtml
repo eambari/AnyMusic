@@ -1,0 +1,38 @@
+﻿@model IEnumerable<anymusic_admin.Models.DTOs.PartnerDTO>
+
+<h2>Partner Store - Tracks</h2>
+
+<table id="dbTable" class="table">
+    <thead>
+        <tr>
+            <th>Track Name</th>
+            <th>Artist Names</th>
+            <th>Album Name</th>
+            <th>Genres</th>
+            <th>Duration (Minutes)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var track in Model)
+        {
+            <tr>
+                <td>@track.TrackName</td>
+                <td>@track.ArtistNames</td>
+                <td>@track.AlbumName</td>
+                <td>@track.GenreNames</td>
+                <td>@track.DurationMinutes</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#dbTable").DataTable();
+        })
+
+
+    </script>
+}

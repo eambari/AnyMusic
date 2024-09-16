@@ -18,6 +18,7 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 
+
 var booksDbConnectionString = builder.Configuration.GetConnectionString("PartnerDbConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<PartnerStoreDB>(options =>
     options.UseSqlServer(booksDbConnectionString));

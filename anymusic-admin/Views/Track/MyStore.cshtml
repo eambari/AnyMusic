@@ -1,0 +1,81 @@
+﻿@model List<anymusic_admin.Models.DTOs.TrackDTO>
+
+<h2>My Store - Tracks</h2>
+
+<table id="dbTable" class="table">
+    <thead>
+        <tr>
+            <th>Track Name</th>
+            <th>Album</th>
+            <th>Duration</th>
+            <th>Rating</th>
+            <th>Artists</th>
+            <th>Playlists</th>
+            <th>User Email</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var track in Model)
+        {
+            <tr>
+                <td>@track.TrackName</td>
+                <td>@(track.Album?.AlbumName ?? "N/A")</td>
+                <td>@track.Duration</td>
+                <td>@track.Rating</td>
+                <td>
+                    @if (track.Artists != null && track.Artists.Any())
+                    {
+                        <ul>
+                            @foreach (var artist in track.Artists)
+                            {
+                                <li>@artist.ArtistName</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span>N/A</span>
+                    }
+                </td>
+                <td>
+                    @if (track.Playlists != null && track.Playlists.Any())
+                    {
+                        <ul>
+                            @foreach (var playlist in track.Playlists)
+                            {
+                                <li>@playlist.Name</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span>N/A</span>
+                    }
+                </td>
+                <td>
+                    @if (track.Playlists != null && track.Playlists.Any())
+                    {
+                        <ul>
+                            @foreach (var playlist in track.Playlists)
+                            {
+                                <li>@playlist.UserEmail</li>
+                            }
+                        </ul>
+                    }
+                    else
+                    {
+                        <span>N/A</span>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section scripts {
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#dbTable").DataTable();
+        });
+    </script>
+}
