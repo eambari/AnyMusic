@@ -8,17 +8,25 @@ using Microsoft.EntityFrameworkCore;
 using AnyMusic.Domain.Domain;
 using AnyMusic.Repository;
 using AnyMusic.Domain.Domain.ViewModels;
+using AnyMusic.Domain.DTO;
+using AnyMusic.Repository.Implementation;
+using AnyMusic.Repository.Interface;
+using ClosedXML.Excel;
 
 namespace AnyMusic.Web.Controllers
 {
     public class TracksController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly ITrackRepository trackRepository;
 
-        public TracksController(ApplicationDbContext context)
+        public TracksController(ApplicationDbContext context, ITrackRepository trackRepository)
         {
             _context = context;
+            this.trackRepository = trackRepository;
         }
+
+
 
         // GET: Tracks
         public async Task<IActionResult> Index()
@@ -199,5 +207,70 @@ namespace AnyMusic.Web.Controllers
         {
             return _context.Tracks.Any(e => e.Id == id);
         }
+
+
+        [HttpGet]
+        public FileContentResult ExportAllTracks()
+        {
+            string fileName = "Tracks.xlsx";
+            string contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+
+           
+            var tracks = trackRepository.GetAll().ToList();
+
+         
+            var trackDtos = tracks.Select(t => new TrackDTO
+            {
+                TrackName = t.TrackName,
+                Album = t.Album != null ? new AlbumDTO { AlbumName = t.Album.AlbumName } : null,
+                Duration = t.Duration,
+                Rating = t.Rating,
+                Artists = t.Artists?.Select(a => new ArtistDTO { ArtistName = a.Artist.ArtistName }).ToList(),
+                Playlists = t.TracksInPlaylists?.Select(tp => new PlaylistDTO
+                {
+                    Name = tp.Playlist?.Name,
+                    UserEmail = tp.Playlist?.User?.Email
+                }).ToList()
+            }).ToList();
+
+            using (var workbook = new XLWorkbook())
+            {
+                IXLWorksheet worksheet = workbook.Worksheets.Add("Tracks");
+
+              
+                worksheet.Cell(1, 1).Value = "Track Name";
+                worksheet.Cell(1, 2).Value = "Album Name";
+                worksheet.Cell(1, 3).Value = "Duration";
+                worksheet.Cell(1, 4).Value = "Rating";
+                worksheet.Cell(1, 5).Value = "Artist Name";
+                worksheet.Cell(1, 6).Value = "Playlist Name";
+                worksheet.Cell(1, 7).Value = "User Email";
+
+             
+                for (int i = 0; i < trackDtos.Count; i++)
+                {
+                    var track = trackDtos[i];
+
+                    worksheet.Cell(i + 2, 1).Value = track.TrackName;
+                    worksheet.Cell(i + 2, 2).Value = track.Album?.AlbumName ?? "N/A";
+                    worksheet.Cell(i + 2, 3).Value = track.Duration;
+                    worksheet.Cell(i + 2, 4).Value = track.Rating;
+
+                  
+                    worksheet.Cell(i + 2, 5).Value = string.Join(", ", track.Artists?.Select(a => a.ArtistName) ?? new List<string> { "N/A" });
+                    worksheet.Cell(i + 2, 6).Value = string.Join(", ", track.Playlists?.Select(p => p.Name) ?? new List<string> { "N/A" });
+                    worksheet.Cell(i + 2, 7).Value = string.Join(", ", track.Playlists?.Select(p => p.UserEmail) ?? new List<string> { "N/A" });
+                }
+
+              
+                using (var stream = new MemoryStream())
+                {
+                    workbook.SaveAs(stream);
+                    var content = stream.ToArray();
+                    return File(content, contentType, fileName);
+                }
+            }
+        }
+
     }
 }
