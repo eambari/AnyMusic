@@ -1,5 +1,10 @@
 ﻿using AnyMusic.Service.Integration.Interface;
-using AnyMusic.Service.Interface;
+using iText.Kernel.Geom;
+using iText.Kernel.Pdf;
+using iText.Layout;
+using iText.Layout.Element;
+using iText.Layout.Properties;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AnyMusic.Web.Controllers.Integration
@@ -13,10 +18,14 @@ namespace AnyMusic.Web.Controllers.Integration
             _partnerService = partnerService;
         }
 
+        [Authorize]
         public async Task<IActionResult> Index()
         {
             var tracks = await _partnerService.GetAllTracksAsync();
             return View(tracks);
         }
+
+
+       
     }
 }

@@ -1,6 +1,7 @@
 ﻿@model IEnumerable<AnyMusic.Domain.Domain.ViewModels.PartnerViewModel>
 
-<table class="table">
+
+<table id="dbTable" class="table">
     <thead>
         <tr>
             <th>Track Name</th>
@@ -23,3 +24,16 @@
         }
     </tbody>
 </table>
+
+
+@section scripts{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#dbTable").DataTable();
+        })
+
+     
+    </script>
+}
+
+
