@@ -32,8 +32,8 @@ Admins can manage the database of albums, tracks, and artists.
 
 This is a university project made from:
 
-Endrit Ambari
+Endrit Ambari (211541)
 
-Eroll Sakipi
+Eroll Sakipi (211590)
 
-Drin Kadriu
+Drin Kadriu (211505)
