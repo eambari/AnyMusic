@@ -149,10 +149,26 @@ namespace AnyMusic.Web.Controllers
         }
 
         // GET: Playlists/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            var userPlaylistsCount = _playlistService.GetAllUserPlaylists(userId).Count();
+
+            if (user.IsSubscribed != true && userPlaylistsCount >= 1)
+            {
+                return RedirectToAction("PremiumOnly");
+            }
+
             return View();
         }
+
 
         // POST: Playlists/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -161,16 +177,38 @@ namespace AnyMusic.Web.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Name,Id")] Playlist playlist)
         {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _context.Users.FindAsync(userId);
+
+            if (user == null)
+            {
+                return Unauthorized();
+            }
+
+            var userPlaylistsCount = _playlistService.GetAllUserPlaylists(userId).Count();
+
+            if (user.IsSubscribed != true && userPlaylistsCount >= 1)
+            {
+                return RedirectToAction("PremiumOnly");
+            }
+
             if (ModelState.IsValid)
             {
                 playlist.Id = Guid.NewGuid();
-                playlist.UserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+                playlist.UserId = userId;
                 _context.Add(playlist);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
             return View(playlist);
         }
+
+        public IActionResult PremiumOnly()
+        {
+            return View();
+        }
+
 
         // GET: Playlists/Edit/5
         public async Task<IActionResult> Edit(Guid? id)
