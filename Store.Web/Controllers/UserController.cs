@@ -17,7 +17,14 @@ namespace AnyMusic.Web.Controllers
 
         public async Task<IActionResult> PayOrder(string stripeEmail, string stripeToken)
         {
-            StripeConfiguration.ApiKey = "sk_test_51PzlpWCduKt5RefbbodPspEUWyLm1bfLVHWujug639WbHtjtunTaOn4s47ONnaBs0gXInhr9TlbdPBAip0J0ZKEh00CRjxNAKa";
+            var stripeSecretKey = Environment.GetEnvironmentVariable("STRIPE_SECRET_KEY");
+
+            if (string.IsNullOrEmpty(stripeSecretKey))
+            {
+                throw new InvalidOperationException("Stripe secret key is not set.");
+            }
+
+            StripeConfiguration.ApiKey = stripeSecretKey;
 
             var customerService = new CustomerService();
             var chargeService = new ChargeService();
