@@ -10,6 +10,7 @@ using AnyMusic.Service.Integration.Interface;
 using AnyMusic.Service.Integration.Implementation;
 using AnyMusic.Repository.Integration.Interface;
 using AnyMusic.Repository.Integration.Implementation;
+using AnyMusic.Domain;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,6 +36,8 @@ builder.Services.AddControllersWithViews();
 //builder.Services.AddHttpClient<IPartnerService, PartnerService>();
 
 
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeSettings"));
+
 
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
@@ -55,6 +58,7 @@ builder.Services.AddTransient<ITrackInPlaylistService, TrackInPlaylistService>()
 
 
 builder.Services.AddTransient<IPartnerService, PartnerService>();
+builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("Stripe"));
 
 var app = builder.Build();
 
