@@ -36,9 +36,6 @@ builder.Services.AddControllersWithViews();
 //builder.Services.AddHttpClient<IPartnerService, PartnerService>();
 
 
-builder.Services.Configure<StripeSettings>(builder.Configuration.GetSection("StripeSettings"));
-
-
 builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
 builder.Services.AddScoped(typeof(IAlbumRepository), typeof(AlbumRepository));
